@@ -1,0 +1,357 @@
+{
+  "encrypted": false,
+  "folders": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Personal",
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    }
+  ],
+  "collections": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Shared",
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    }
+  ],
+  "items": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "organizationId": null,
+      "folderId": "550e8400-e29b-41d4-a716-446655440001",
+      "type": 1,
+      "name": "login",
+      "notes": "Generic login item",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://github.com/login",
+            "match": 0
+          }
+        ],
+        "username": "testuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "website",
+      "notes": "Another generic item",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://paypal.com/signin",
+            "match": 0
+          }
+        ],
+        "username": "user@example.com",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "My Bank Account",
+      "notes": "Personal banking login",
+      "favorite": true,
+      "fields": [
+        {
+          "name": "account_number",
+          "value": "1234567890",
+          "type": 0
+        }
+      ],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://www.chase.com",
+            "match": 0
+          }
+        ],
+        "username": "bankuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "account",
+      "notes": "",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://facebook.com",
+            "match": 0
+          }
+        ],
+        "username": "socialuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440007",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "AWS Console",
+      "notes": "Cloud infrastructure access",
+      "favorite": false,
+      "fields": [
+        {
+          "name": "access_key",
+          "value": "AKIA...",
+          "type": 0
+        }
+      ],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://console.aws.amazon.com",
+            "match": 0
+          }
+        ],
+        "username": "admin@company.com",
+        "password": "encrypted_password_here",
+        "totp": "JBSWY3DPEHPK3PXP",
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Gmail",
+      "notes": "Personal email account",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://gmail.com",
+            "match": 0
+          }
+        ],
+        "username": "user@gmail.com",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440009",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Amazon Shopping",
+      "notes": "Online shopping account",
+      "favorite": false,
+      "fields": [
+        {
+          "name": "prime_member",
+          "value": "true",
+          "type": 1
+        }
+      ],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://amazon.com",
+            "match": 0
+          }
+        ],
+        "username": "shopper@example.com",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Government Portal",
+      "notes": "Tax filing access",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://www.irs.gov",
+            "match": 0
+          }
+        ],
+        "username": "taxpayer123",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440011",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Travel Booking",
+      "notes": "Vacation planning",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://booking.com",
+            "match": 0
+          }
+        ],
+        "username": "traveler@example.com",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440012",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Security Key",
+      "notes": "2FA backup codes",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://yubico.com",
+            "match": 0
+          }
+        ],
+        "username": "security@example.com",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440013",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Multiple URLs",
+      "notes": "Item with multiple URIs",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://api.github.com",
+            "match": 0
+          },
+          {
+            "uri": "https://github.com",
+            "match": 0
+          },
+          {
+            "uri": "https://gist.github.com",
+            "match": 0
+          }
+        ],
+        "username": "devuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440014",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "UK Domain",
+      "notes": "Testing UK domain handling",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "https://www.example.co.uk",
+            "match": 0
+          }
+        ],
+        "username": "ukuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440015",
+      "organizationId": null,
+      "folderId": null,
+      "type": 1,
+      "name": "Raw Hostname",
+      "notes": "Testing raw hostname parsing",
+      "favorite": false,
+      "fields": [],
+      "login": {
+        "uris": [
+          {
+            "uri": "example.org",
+            "match": 0
+          }
+        ],
+        "username": "rawuser",
+        "password": "encrypted_password_here",
+        "totp": null,
+        "autofillOnPageLoad": null,
+        "passwordRevisionDate": "2024-01-15T10:30:00.000Z"
+      },
+      "revisionDate": "2024-01-15T10:30:00.000Z"
+    }
+  ]
+}
