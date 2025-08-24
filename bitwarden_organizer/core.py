@@ -2,7 +2,7 @@
 Core functionality for organizing Bitwarden exports.
 
 This module contains the main logic for categorizing, tagging, and organizing
-Bitwarden password exports.
+Bitwarden password exports with AI-powered enhancements.
 """
 
 import copy
@@ -13,6 +13,8 @@ import uuid
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import urlparse
+
+from .ai_config import AIConfig, AICategorizer
 
 
 @dataclass
@@ -25,6 +27,14 @@ class OrganizerConfig:
     suggest_names: bool = True
     create_folders: bool = True
     add_tags: bool = True
+
+    # AI configuration
+    ai_enabled: bool = False
+    ai_config: Optional[AIConfig] = None
+    ai_batch_size: int = 10
+
+    # Fallback to rule-based categorization if AI fails
+    fallback_to_rules: bool = True
 
 
 # --- Classification rules ----------------------------------------------------
@@ -258,14 +268,53 @@ def organize_item(
     if not domains:
         return organized_item
 
-    # Categorize and tag
-    category, tags = categorize_item(domains)
+    # Use AI categorization if enabled, otherwise fall back to rules
+    if config.ai_enabled and config.ai_config:
+        try:
+            # Extract item information for AI
+            name = item.get("name", "")
+            description = item.get("notes", "")
+            uris = []
+            if item.get("login") and item.get("login", {}).get("uris"):
+                uris = [uri.get("uri", "") for uri in item["login"]["uris"] if uri.get("uri")]
 
-    # Suggest better name
-    if config.suggest_names:
-        suggested_name = suggest_item_name(item, domains)
-        if suggested_name != item.get("name"):
-            organized_item["name"] = suggested_name
+            # Use AI for categorization
+            category = config.ai_config.categorize_item(name, description, uris)
+
+            # Use AI for name suggestion
+            if config.suggest_names:
+                suggested_name = config.ai_config.suggest_name(name, description, uris)
+                if suggested_name != name:
+                    organized_item["name"] = suggested_name
+
+            # Use AI for tag generation
+            if config.add_tags:
+                tags = config.ai_config.generate_tags(name, category, description, uris)
+            else:
+                tags = {category.lower()}
+
+        except Exception as e:
+            if config.verbose:
+                print(f"AI processing failed for item {item.get('name', 'Unknown')}: {e}")
+            if config.fallback_to_rules:
+                # Fall back to rule-based categorization
+                category, tags = categorize_item(domains)
+                if config.suggest_names:
+                    suggested_name = suggest_item_name(item, domains)
+                    if suggested_name != item.get("name"):
+                        organized_item["name"] = suggested_name
+            else:
+                # Use default category if no fallback
+                category, tags = "General", {"general"}
+    else:
+        # Use traditional rule-based categorization
+        category, tags = categorize_item(domains)
+
+        # Suggest better name
+        if config.suggest_names:
+            suggested_name = suggest_item_name(item, domains)
+            if suggested_name != item.get("name"):
+                organized_item["name"] = suggested_name
 
     # Add tags as custom field
     if config.add_tags and tags:
@@ -339,15 +388,61 @@ def organize_bitwarden_export(
     # Determine if this is an organization vault
     is_org_vault = "collections" in organized_data
 
-    # Process each item
-    for i, item in enumerate(items):
+    # Use AI batch processing if enabled
+    if config.ai_enabled and config.ai_config:
+        print("Using AI-powered organization...")
         try:
-            organized_items = organize_item(item, folders, collections, config, is_org_vault)
-            items[i] = organized_items
+            # Process items with AI in batches
+            ai_categorizer = AICategorizer(config.ai_config)
+            processed_items = ai_categorizer.batch_process(items, config.ai_batch_size)
+            
+            # Update items with AI processing results
+            for i, processed_item in enumerate(processed_items):
+                items[i] = processed_item
+                
+            # Create folders/collections based on AI categories
+            if config.create_folders:
+                for item in processed_items:
+                    if "notes" in item and "AI Category:" in item["notes"]:
+                        # Extract AI category from notes
+                        lines = item["notes"].split("\n")
+                        for line in lines:
+                            if line.startswith("AI Category:"):
+                                category = line.replace("AI Category:", "").strip()
+                                if not is_org_vault:
+                                    folder_id = find_or_create_folder(folders, category)
+                                    item["folderId"] = folder_id
+                                else:
+                                    collection_id = find_or_create_collection(collections, category)
+                                    item["collectionIds"] = [collection_id]
+                                break
+                                
         except Exception as e:
-            if config.verbose:
-                print(f"Warning: Failed to process item {i}: {e}")
-            continue
+            print(f"AI processing failed: {e}")
+            if config.fallback_to_rules:
+                print("Falling back to rule-based organization...")
+                # Fall back to traditional processing
+                for i, item in enumerate(items):
+                    try:
+                        organized_items = organize_item(item, folders, collections, config, is_org_vault)
+                        items[i] = organized_items
+                    except Exception as e:
+                        if config.verbose:
+                            print(f"Warning: Failed to process item {i}: {e}")
+                        continue
+            else:
+                raise e
+    else:
+        # Traditional rule-based processing
+        print("Using rule-based organization...")
+        for i, item in enumerate(items):
+            try:
+                organized_items = organize_item(item, folders, collections, config, is_org_vault)
+                items[i] = organized_items
+            except Exception as e:
+                if config.verbose:
+                    print(f"Warning: Failed to process item {i}: {e}")
+                continue
 
     # Update the organized data
     organized_data["folders"] = folders

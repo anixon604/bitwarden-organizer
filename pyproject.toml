@@ -30,6 +30,8 @@ Issues = "https://github.com/yourusername/bitwarden-organizer/issues"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
+openai = "^1.0.0"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0.0"

@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 from .core import OrganizerConfig, organize_bitwarden_export
+from .ai_config import AIConfig
 
 
 def load_json_file(file_path: str) -> dict:
@@ -80,11 +81,21 @@ Examples:
   %(prog)s export.json                    # Organize and save as export_organized.json
   %(prog)s export.json -o clean.json      # Organize and save as clean.json
   %(prog)s export.json --dry-run          # Preview changes without saving
+  %(prog)s export.json --ai               # Use AI-powered organization (requires OpenAI API key)
+
+AI Features:
+  - Smart categorization using GPT models
+  - Intelligent name suggestions
+  - Context-aware tag generation
+  - Automatic fallback to rules if AI fails
+  - Support for local models via custom base URLs
 
 Safety Notes:
   - Always test on a COPY of your export first
   - The tool never modifies usernames, passwords, or TOTP secrets
   - Only processes: names, notes, folders, collections, and custom fields
+  - AI processing requires OpenAI API key (set OPENAI_API_KEY environment variable)
+  - For local models, use --ai-base-url to specify your local API endpoint
         """
     )
 
@@ -134,10 +145,57 @@ Safety Notes:
         help='Skip adding tags as custom fields'
     )
 
+    parser.add_argument(
+        '--ai',
+        action='store_true',
+        help='Enable AI-powered categorization and organization'
+    )
+
+    parser.add_argument(
+        '--ai-model',
+        default='gpt-4o-mini',
+        help='OpenAI model to use for AI processing (default: gpt-4o-mini)'
+    )
+
+    parser.add_argument(
+        '--ai-base-url',
+        default='https://api.openai.com/v1',
+        help='OpenAI API base URL for local models (default: https://api.openai.com/v1)'
+    )
+
+    parser.add_argument(
+        '--ai-batch-size',
+        type=int,
+        default=10,
+        help='Number of items to process in each AI batch (default: 10)'
+    )
+
+    parser.add_argument(
+        '--no-fallback',
+        action='store_true',
+        help='Disable fallback to rule-based categorization if AI fails'
+    )
+
     args = parser.parse_args()
 
     # Validate input file
     validate_input_file(args.input_file)
+
+    # Create AI configuration if enabled
+    ai_config = None
+    if args.ai:
+        try:
+            ai_config = AIConfig.from_env()
+            ai_config.model = args.ai_model
+            ai_config.base_url = args.ai_base_url
+            print("✓ AI configuration loaded successfully")
+        except ValueError as e:
+            print(f"Error: {e}")
+            print("Please set the OPENAI_API_KEY environment variable or create a .env file")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error loading AI configuration: {e}")
+            sys.exit(1)
 
     # Create configuration
     config = OrganizerConfig(
@@ -146,7 +204,11 @@ Safety Notes:
         add_metadata=not args.no_metadata,
         suggest_names=not args.no_suggest_names,
         create_folders=not args.no_folders,
-        add_tags=not args.no_tags
+        add_tags=not args.no_tags,
+        ai_enabled=args.ai,
+        ai_config=ai_config,
+        ai_batch_size=args.ai_batch_size,
+        fallback_to_rules=not args.no_fallback
     )
 
     # Load input data
