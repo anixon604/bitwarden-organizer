@@ -31,6 +31,10 @@ class AIConfig:
     name_suggestion_enabled: bool = True
     tag_generation_enabled: bool = True
 
+    # Brand name preservation settings
+    preserve_brand_names: bool = True
+    enhance_with_domain_context: bool = True
+
     @classmethod
     def from_env(cls) -> "AIConfig":
         """Create AI config from environment variables."""
@@ -48,6 +52,8 @@ class AIConfig:
             categorization_enabled=os.getenv("AI_CATEGORIZATION_ENABLED", "true").lower() == "true",
             name_suggestion_enabled=os.getenv("AI_NAME_SUGGESTION_ENABLED", "true").lower() == "true",
             tag_generation_enabled=os.getenv("AI_TAG_GENERATION_ENABLED", "true").lower() == "true",
+            preserve_brand_names=os.getenv("AI_PRESERVE_BRAND_NAMES", "true").lower() == "true",
+            enhance_with_domain_context=os.getenv("AI_ENHANCE_WITH_DOMAIN_CONTEXT", "true").lower() == "true",
         )
 
 
@@ -89,7 +95,19 @@ Given a website/service name and optional description, suggest a better name tha
 - Clear and descriptive
 - Professional
 - Easy to identify
-- Not too generic (avoid "Website" or "Login")
+- NOT too generic (avoid "Website" or "Login")
+- PRESERVES important brand names and company names
+- INCLUDES domain context when relevant
+- MAINTAINS recognizability of the service
+
+IMPORTANT: Always preserve brand names like "Cloudflare", "GitHub", "PayPal", etc. in the suggested name.
+If the current name contains a brand name, keep it. If not, add it from the domain context.
+
+Examples:
+- "Cloudflare Domain Validation Services" → "Cloudflare Domain Validation Services" (keep brand)
+- "login" with domain "github.com" → "GitHub" (add brand from domain)
+- "My Account" with domain "paypal.com" → "PayPal Account" (add brand from domain)
+- "Website" with domain "aws.amazon.com" → "AWS" (add brand from domain)
 
 Respond with ONLY the suggested name, nothing else."""
 
@@ -103,19 +121,49 @@ Tags should be:
 
 Respond with ONLY the tags, nothing else."""
 
+    def _build_enhanced_domain_context(self, uris: List[str]) -> str:
+        """Build enhanced domain context with subdomain and registrable domain information."""
+        if not uris:
+            return ""
+
+        domains = []
+        for uri in uris:
+            if uri:
+                # Extract domain from URI
+                if "://" in uri:
+                    domain = uri.split("://")[-1].split("/")[0]
+                else:
+                    domain = uri
+
+                # Parse domain parts for better context
+                parts = domain.split(".")
+                if len(parts) >= 2:
+                    # Get registrable domain (last 2 parts, or 3 for special TLDs)
+                    if len(parts) >= 3 and ".".join(parts[-2:]) in ["co.uk", "gov.uk", "ac.uk", "com.au", "com.br", "com.mx", "com.tr", "co.jp", "co.nz", "co.za"]:
+                        registrable_domain = ".".join(parts[-3:])
+                    else:
+                        registrable_domain = ".".join(parts[-2:])
+
+                    # Get subdomain if it exists
+                    subdomain = ".".join(parts[:-2]) if len(parts) > 2 else None
+
+                    domain_info = f"{domain}"
+                    if subdomain:
+                        domain_info += f" (subdomain: {subdomain}, main: {registrable_domain})"
+                    else:
+                        domain_info += f" (main: {registrable_domain})"
+
+                    domains.append(domain_info)
+
+        return f"\nDomains: {', '.join(domains)}" if domains else ""
+
     def categorize_item(self, name: str, description: str = "", uris: List[str] = None) -> str:
         """Use AI to categorize an item."""
         if not self.config.categorization_enabled:
             return "General"
 
         try:
-            # Build context from URIs if available
-            uri_context = ""
-            if uris:
-                domains = [uri.split("://")[-1].split("/")[0] if "://" in uri else uri
-                          for uri in uris if uri]
-                uri_context = f" Domains: {', '.join(domains)}"
-
+            uri_context = self._build_enhanced_domain_context(uris or [])
             prompt = f"Name: {name}{uri_context}\nDescription: {description}\n\nCategory:"
 
             response = self.client.chat.completions.create(
@@ -141,13 +189,7 @@ Respond with ONLY the tags, nothing else."""
             return current_name
 
         try:
-            # Build context from URIs if available
-            uri_context = ""
-            if uris:
-                domains = [uri.split("://")[-1].split("/")[0] if "://" in uri else uri
-                          for uri in uris if uri]
-                uri_context = f" Domains: {', '.join(domains)}"
-
+            uri_context = self._build_enhanced_domain_context(uris or [])
             prompt = f"Current name: {current_name}{uri_context}\nDescription: {description}\n\nSuggested name:"
 
             response = self.client.chat.completions.create(
@@ -173,13 +215,7 @@ Respond with ONLY the tags, nothing else."""
             return {category.lower()}
 
         try:
-            # Build context from URIs if available
-            uri_context = ""
-            if uris:
-                domains = [uri.split("://")[-1].split("/")[0] if "://" in uri else uri
-                          for uri in uris if uri]
-                uri_context = f" Domains: {', '.join(domains)}"
-
+            uri_context = self._build_enhanced_domain_context(uris or [])
             prompt = f"Name: {name}\nCategory: {category}{uri_context}\nDescription: {description}\n\nTags:"
 
             response = self.client.chat.completions.create(

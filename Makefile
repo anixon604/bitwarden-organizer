@@ -52,6 +52,20 @@ run-hooks: ## Run pre-commit hooks on all files
 
 check-all: format lint test ## Run all checks (format, lint, test)
 
+validate-test: ## Test the validation script with sample data
+	python test_validation.py
+
+validate-test-errors: ## Test the validation script with error scenarios
+	python test_validation_errors.py
+
+validate: ## Validate Bitwarden export files (usage: make validate INPUT=file1.json OUTPUT=file2.json)
+	@if [ -z "$(INPUT)" ] || [ -z "$(OUTPUT)" ]; then \
+		echo "Usage: make validate INPUT=input.json OUTPUT=output.json"; \
+		echo "Example: make validate INPUT=bw.json OUTPUT=bw_organized.json"; \
+		exit 1; \
+	fi
+	python validate_bitwarden_export.py $(INPUT) $(OUTPUT)
+
 dev-setup: install-dev install-hooks ## Complete development setup
 	@echo "Development environment setup complete!"
 	@echo "Run 'make check-all' to verify everything is working."

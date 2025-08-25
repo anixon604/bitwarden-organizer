@@ -213,11 +213,62 @@ bitwarden-organizer/
 │   ├── __init__.py
 │   ├── test_core.py
 │   └── test_cli.py
+├── validation/
+│   ├── validate_bitwarden_export.py  # Main validation script
+│   ├── test_validation.py            # Test script for validation
+│   ├── test_validation_errors.py     # Error scenario tests
+│   └── validate.sh                   # Shell script wrapper
 ├── pyproject.toml       # Poetry configuration
 ├── env.example          # Environment variables template
 ├── README.md
+├── VALIDATION_README.md # Validation documentation
 └── .gitignore
 ```
+
+## Validation
+
+After organizing your Bitwarden export, you can validate the integrity and quality of the output using our validation script.
+
+### Quick Validation
+
+```bash
+# Using the shell script (recommended)
+./validate.sh bw.json bw_organized.json
+
+# Using Python directly
+python validate_bitwarden_export.py bw.json bw_organized.json
+
+# Using Make
+make validate INPUT=bw.json OUTPUT=bw_organized.json
+```
+
+### What Gets Validated
+
+- **Data Integrity**: Item count, credentials preservation, core data integrity
+- **Organization Quality**: Folders created, collections created, tags assigned
+- **Metadata Preservation**: Notes, URIs, creation dates, revision dates
+- **Structure Validation**: JSON format, required fields, vault type detection
+
+### Test the Validation
+
+```bash
+# Test with sample data
+make validate-test
+
+# Test error scenarios
+make validate-test-errors
+```
+
+### Validation Report
+
+The script generates a comprehensive report showing:
+- ✅ Pass/fail status for each validation check
+- 📊 Statistics about organization improvements
+- ⚠️ Warnings for non-critical issues
+- ❌ Errors that prevent safe import
+- 🎯 Overall recommendation for import
+
+For detailed documentation, see [VALIDATION_README.md](VALIDATION_README.md).
 
 ## Contributing
 
