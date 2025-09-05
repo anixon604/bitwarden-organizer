@@ -19,7 +19,6 @@ A Python tool to organize and structure Bitwarden JSON exports with **AI-powered
 
 - Python 3.8 or higher
 - Poetry (recommended) or pip
-- OpenAI API key (for AI features)
 
 ### Using Poetry (Recommended)
 
