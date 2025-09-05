@@ -287,23 +287,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Environment Variables
 
-Create a `.env` file in the project root with your OpenAI configuration:
+Create a `.env` file in the project root with your **LOCAL OpenAI compatible endpoints** configuration:
 
-```bash
-# Required for AI features
-OPENAI_API_KEY=your_openai_api_key_here
-
-# Optional AI configuration
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_MAX_TOKENS=1000
-OPENAI_TEMPERATURE=0.1
-OPENAI_BASE_URL=https://api.openai.com/v1
-
-# Feature flags
-AI_CATEGORIZATION_ENABLED=true
-AI_NAME_SUGGESTION_ENABLED=true
-AI_TAG_GENERATION_ENABLED=true
-```
 
 **Local Model Configuration:**
 ```bash
@@ -333,10 +318,4 @@ This tool processes sensitive password data. Always:
 - Verify the output before importing back to Bitwarden
 - Keep your original export as a backup
 - Use in a secure environment
-- Be aware that AI processing sends data to OpenAI (review their privacy policy)
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/bitwarden-organizer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/bitwarden-organizer/discussions)
-- **Security**: Report security issues to [security@example.com](mailto:security@example.com)
+- DO NOT USE NON-LOCAL inference. i.e. OPEN AI etc. Make sure to only use locally hosted models (everything is done locally on your machine).
